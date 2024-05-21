@@ -22,7 +22,7 @@ use crypto_common::{
 #[cfg(feature = "mac")]
 use crate::MacMarker;
 #[cfg(feature = "oid")]
-use const_oid::{AssociatedOid, ObjectIdentifier};
+use const_oid::{AssociatedOid, ObjectIdentifierRef};
 
 /// Wrapper around [`BufferKindUser`].
 ///
@@ -176,7 +176,7 @@ impl<T> AssociatedOid for CoreWrapper<T>
 where
     T: BufferKindUser + AssociatedOid,
 {
-    const OID: ObjectIdentifier = T::OID;
+    const OID: &'static ObjectIdentifierRef = T::OID;
 }
 
 type CoreWrapperSerializedStateSize<T> =

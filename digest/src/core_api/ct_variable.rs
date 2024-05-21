@@ -6,7 +6,7 @@ use crate::HashMarker;
 #[cfg(feature = "mac")]
 use crate::MacMarker;
 #[cfg(feature = "oid")]
-use const_oid::{AssociatedOid, ObjectIdentifier};
+use const_oid::{AssociatedOid, ObjectIdentifierRef};
 use core::{
     fmt,
     marker::PhantomData,
@@ -164,7 +164,7 @@ where
     OutSize: ArraySize + IsLessOrEqual<T::OutputSize>,
     LeEq<OutSize, T::OutputSize>: NonZero,
 {
-    const OID: ObjectIdentifier = O::OID;
+    const OID: &'static ObjectIdentifierRef = O::OID;
 }
 
 #[cfg(feature = "zeroize")]
@@ -198,7 +198,8 @@ macro_rules! impl_oid_carrier {
 
         #[cfg(feature = "oid")]
         impl AssociatedOid for $name {
-            const OID: ObjectIdentifier = ObjectIdentifier::new_unwrap($oid);
+            const OID: &'static ObjectIdentifierRef =
+                const_oid::ObjectIdentifier::new_unwrap($oid).as_oid_ref();
         }
     };
 }
