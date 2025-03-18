@@ -1,7 +1,7 @@
 //! Development-related functionality
 pub use blobby;
 
-#[cfg(all(feature = "alloc", feature = "inout"))]
+#[cfg(feature = "alloc")]
 use {
     crate::Tag, alloc::vec, alloc::vec::Vec, core::fmt, crypto_common::typenum::Unsigned,
     inout::InOutBuf,
@@ -14,9 +14,9 @@ macro_rules! new_test {
         #[test]
         fn $name() {
             use aead::{
-                Aead, KeyInit, Payload,
-                array::{Array, typenum::Unsigned},
+                array::{typenum::Unsigned, Array},
                 dev::blobby::Blob6Iterator,
+                Aead, KeyInit, Payload,
             };
 
             fn run_test(
@@ -85,7 +85,7 @@ macro_rules! new_test {
 }
 
 /// Helper to run tests against the inout API.
-#[cfg(not(all(feature = "alloc", feature = "inout")))]
+#[cfg(not(feature = "alloc"))]
 pub fn new_test_impl_inout<T: crate::AeadCore>(
     _cipher: T,
     _nonce: &crate::Nonce<T>,
@@ -98,7 +98,7 @@ pub fn new_test_impl_inout<T: crate::AeadCore>(
 }
 
 /// Helper to run tests against the inout API.
-#[cfg(all(feature = "alloc", feature = "inout"))]
+#[cfg(feature = "alloc")]
 pub fn new_test_impl_inout<T: crate::AeadInOut>(
     cipher: T,
     nonce: &crate::Nonce<T>,
@@ -147,20 +147,20 @@ pub fn new_test_impl_inout<T: crate::AeadInOut>(
 ///
 /// It will split the initial buffer in two different backing buffers. The out buffer will be
 /// zeroed.
-#[cfg(all(feature = "alloc", feature = "inout"))]
+#[cfg(feature = "alloc")]
 pub struct MockBuffer {
     in_buf: Vec<u8>,
     out_buf: Vec<u8>,
 }
 
-#[cfg(all(feature = "alloc", feature = "inout"))]
+#[cfg(feature = "alloc")]
 impl AsRef<[u8]> for MockBuffer {
     fn as_ref(&self) -> &[u8] {
         &self.out_buf
     }
 }
 
-#[cfg(all(feature = "alloc", feature = "inout"))]
+#[cfg(feature = "alloc")]
 impl From<&[u8]> for MockBuffer {
     fn from(buf: &[u8]) -> Self {
         Self {
@@ -170,7 +170,7 @@ impl From<&[u8]> for MockBuffer {
     }
 }
 
-#[cfg(all(feature = "alloc", feature = "inout"))]
+#[cfg(feature = "alloc")]
 impl From<Vec<u8>> for MockBuffer {
     fn from(buf: Vec<u8>) -> Self {
         Self {
@@ -180,7 +180,7 @@ impl From<Vec<u8>> for MockBuffer {
     }
 }
 
-#[cfg(all(feature = "alloc", feature = "inout"))]
+#[cfg(feature = "alloc")]
 impl MockBuffer {
     /// Get an [`InOutBuf`] from a [`MockBuffer`]
     pub fn to_in_out_buf(&mut self) -> InOutBuf<'_, '_, u8> {
@@ -201,7 +201,7 @@ impl MockBuffer {
     }
 }
 
-#[cfg(all(feature = "alloc", feature = "inout"))]
+#[cfg(feature = "alloc")]
 impl fmt::Debug for MockBuffer {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "MockBuffer {{...}}")
